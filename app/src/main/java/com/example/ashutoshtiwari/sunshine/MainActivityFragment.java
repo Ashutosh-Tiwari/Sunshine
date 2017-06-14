@@ -13,6 +13,5 @@ public class MainActivityFragment extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new PlaceHolderFragment()).commit();
         }
 
-
     }
 }
