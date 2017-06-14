@@ -9,6 +9,9 @@ public class MainActivityFragment extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_main);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.container, new PlaceHolderFragment()).commit();
+        }
 
 
     }
