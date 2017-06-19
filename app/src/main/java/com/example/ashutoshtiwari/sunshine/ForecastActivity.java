@@ -6,13 +6,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends AppCompatActivity {
+public class ForecastActivity extends AppCompatActivity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_main);
+        setContentView(R.layout.activity_forecast);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new ForecastFragment()).commit();
         }
