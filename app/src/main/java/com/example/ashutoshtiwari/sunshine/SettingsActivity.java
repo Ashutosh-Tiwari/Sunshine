@@ -34,8 +34,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
+            } else {
+                preference.setSummary(stringValue);
             }
         }
-        return false;
+        return true;
     }
 }

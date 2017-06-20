@@ -18,7 +18,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailForecastItem" />
+        <activity
+            android:name=".DetailForecastItem"
+            android:label="@string/title_detail_forecast_list"
+            android:parentActivityName=".ForecastActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ashutoshtiwari.sunshine.DetailForecastItem" />
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_settings_activity"
+            android:parentActivityName=".ForecastActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ashutoshtiwari.sunshine.SettingsActivity" />
+        </activity>
     </application>
 
 </manifest>
