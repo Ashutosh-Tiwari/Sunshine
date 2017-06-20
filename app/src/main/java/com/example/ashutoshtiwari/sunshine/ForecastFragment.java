@@ -1,9 +1,11 @@
 package com.example.ashutoshtiwari.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -29,8 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Ashutosh.tiwari on 14/06/17.
@@ -38,7 +38,6 @@ import java.util.List;
 
 public class ForecastFragment extends Fragment {
 
-    ListView forecastList;
     ArrayAdapter<String> mForecastAdapter;
 
 
@@ -60,30 +59,31 @@ public class ForecastFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            new FetchWeatherTask().execute("94043");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateWeather() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        new FetchWeatherTask().execute(location);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        String forecastArray[] = {
-                "Today - 88/63",
-                "Tomorrow - 66/76",
-                "Wednesday - 55/65",
-                "Thursday - 87/67",
-                "Friday - 78/67",
-                "Saturday - 90/78",
-                "Sunday - 65/76"};
+        mForecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
-        mForecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, weekForecast);
-
-        forecastList = (ListView) rootView.findViewById(R.id.listview_forecast);
+        ListView forecastList = (ListView) rootView.findViewById(R.id.listview_forecast);
         forecastList.setAdapter(mForecastAdapter);
 
         forecastList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -108,7 +108,15 @@ public class ForecastFragment extends Fragment {
             return shortenedDateFormat.format(time);
         }
 
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double high, double low, String unitType) {
+
+            if (unitType.equals(getString(R.string.pref_unit_imperial))) {
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if(!unitType.equals(getString(R.string.pref_unit_metric))) {
+                Log.e(TAG, "Unit type not found: " + unitType);
+            }
+
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
             String highLowStr = "";
@@ -138,6 +146,9 @@ public class ForecastFragment extends Fragment {
                 dayTime = new Time();
                 String[] resultStrings = new String[numDays];
 
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String unitType = sharedPreferences.getString(getString(R.string.pref_unit_key), getString(R.string.pref_unit_metric));
+
                 for (int i = 0; i < weatherArray.length(); i++) {
                     String day;
                     String description;
@@ -157,7 +168,7 @@ public class ForecastFragment extends Fragment {
                     double high = tempretureObject.getDouble(OWM_MAX);
                     double low = tempretureObject.getDouble(OWM_MIN);
 
-                    highAndLow = formatHighLows(high, low);
+                    highAndLow = formatHighLows(high, low, unitType);
                     resultStrings[i] = day + " - " + description + " - " + highAndLow;
                 }
                 return resultStrings;

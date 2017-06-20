@@ -15,13 +15,19 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        addPreferencesFromResource(R.xml.pref_general);
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_unit_key)));
     }
 
     private void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(this);
 
-        onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext())
-                .getString(preference.getKey(), ""));
+        onPreferenceChange(preference,
+                PreferenceManager
+                        .getDefaultSharedPreferences(preference.getContext())
+                        .getString(preference.getKey(), ""));
     }
 
     @Override
@@ -34,9 +40,9 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
-            } else {
-                preference.setSummary(stringValue);
             }
+        } else {
+            preference.setSummary(stringValue);
         }
         return true;
     }

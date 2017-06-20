@@ -8,4 +8,8 @@
         android:orderInCategory="1"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:title="@string/action_map"
+        android:id="@+id/action_map"
+        app:showAsAction="never"/>
 </menu>
