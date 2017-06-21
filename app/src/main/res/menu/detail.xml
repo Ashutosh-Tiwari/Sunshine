@@ -8,10 +8,4 @@
         android:orderInCategory="1"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
-    <item
-        android:title="@string/action_share"
-        android:id="@+id/action_share"
-        android:orderInCategory="2"
-        app:showAsAction="ifRoom" />
 </menu>
