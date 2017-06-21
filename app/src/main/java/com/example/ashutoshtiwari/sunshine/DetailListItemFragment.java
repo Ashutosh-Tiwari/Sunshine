@@ -3,8 +3,9 @@ package com.example.ashutoshtiwari.sunshine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +20,9 @@ import android.widget.TextView;
 
 public class DetailListItemFragment extends Fragment {
 
-    private ActionProvider shareActionProvider;
-    String forecastJsonString;
+    private static final String TAG = DetailListItemFragment.class.getSimpleName();
+    private static final String FORECAST_SHARE_HASHTAG = "#SunshineApp";
+    String mForecastJsonString;
 
     public DetailListItemFragment() {
     }
@@ -36,8 +38,8 @@ public class DetailListItemFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         View rootView = inflater.inflate(R.layout.fragment_detail_list_item, container, false);
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            forecastJsonString = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ((TextView) rootView.findViewById(R.id.textview_detail)).setText(forecastJsonString);
+            mForecastJsonString = intent.getStringExtra(Intent.EXTRA_TEXT);
+            ((TextView) rootView.findViewById(R.id.textview_detail)).setText(mForecastJsonString);
         }
         return rootView;
     }
@@ -45,10 +47,21 @@ public class DetailListItemFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.detail_fragment, menu);
         MenuItem menuItem = menu.findItem(R.id.action_share);
-        shareActionProvider = MenuItemCompat.getActionProvider(menuItem);
-        //shareActionProvider.(new Intent().putExtra(Intent.EXTRA_TEXT, forecastJsonString.concat("#SunshineApp")));
 
 
+        ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        if (shareActionProvider != null) {
+            shareActionProvider.setShareIntent(createShareIntent());
+        } else Log.e(TAG, "Share action provider is null!");
+    }
+
+    private Intent createShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastJsonString + FORECAST_SHARE_HASHTAG);
+        return shareIntent;
     }
 }
