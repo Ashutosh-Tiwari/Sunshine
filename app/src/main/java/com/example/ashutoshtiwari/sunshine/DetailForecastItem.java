@@ -34,5 +34,4 @@ public class DetailForecastItem extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -212,7 +212,7 @@ public class ForecastFragment extends Fragment {
 
 
                 URL url = new URL(builtUrl.toString());
-                Log.v(TAG, url.toString());
+                //Log.v(TAG, url.toString()); Logging the final URL to check if it is correct
 
                 //Create connection to openWeatherMap query
                 urlConnection = (HttpURLConnection) url.openConnection();
