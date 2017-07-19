@@ -12,15 +12,19 @@ import android.view.MenuItem;
 public class ForecastActivity extends AppCompatActivity {
 
     private static final String TAG = ForecastActivity.class.getSimpleName();
+    private static final String FORECAST_FRAGMENT_TAG = "forecast_fragment";
+    private String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.container, new ForecastFragment()).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.container, new ForecastFragment(), FORECAST_FRAGMENT_TAG).commit();
         }
         Log.v(TAG, "onCreate()");
+
+        location = Utility.getPreferredLocation(this);
     }
 
     @Override
@@ -33,6 +37,11 @@ public class ForecastActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.v(TAG, "onResume()");
+        if (Utility.getPreferredLocation(this).equals(location)) {
+            ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECAST_FRAGMENT_TAG);
+            forecastFragment.onLocationChanged();
+            location = Utility.getPreferredLocation(this);
+        }
     }
 
     @Override

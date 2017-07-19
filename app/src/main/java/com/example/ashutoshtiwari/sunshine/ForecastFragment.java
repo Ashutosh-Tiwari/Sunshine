@@ -70,6 +70,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         setHasOptionsMenu(true);
     }
 
+   /* @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }*/
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecast_fragment, menu);
@@ -90,12 +96,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         fetchWeatherTask.execute(location);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    public void onLocationChanged() {
         updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

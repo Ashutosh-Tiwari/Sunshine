@@ -38,6 +38,8 @@
 
         <provider
             android:name=".data.WeatherProvider"
-            android:authorities="com.example.ashutoshtiwari.sunshine" />
+            android:authorities="com.example.ashutoshtiwari.sunshine"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 </manifest>
