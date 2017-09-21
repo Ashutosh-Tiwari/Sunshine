@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.ashutoshtiwari.sunshine">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_sunshine"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_sunshine_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ForecastActivity">
@@ -21,7 +21,8 @@
         <activity
             android:name=".DetailForecastItem"
             android:label="@string/title_detail_forecast_list"
-            android:parentActivityName=".ForecastActivity">
+            android:parentActivityName=".ForecastActivity"
+            tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ashutoshtiwari.sunshine.DetailForecastItem" />
@@ -30,7 +31,8 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_settings_activity"
-            android:parentActivityName=".ForecastActivity">
+            android:parentActivityName=".ForecastActivity"
+            tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ashutoshtiwari.sunshine.SettingsActivity" />

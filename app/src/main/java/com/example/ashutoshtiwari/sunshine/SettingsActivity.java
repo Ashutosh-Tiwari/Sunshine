@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 
 /**
  * Created by Ashutosh.tiwari on 19/06/17.
+ * Settings activity for providing app specific settings to the users
  */
 
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
@@ -46,4 +47,9 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         }
         return true;
     }
+
+  /*  @Override
+    public Intent getParentActivityIntent() {
+        return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    }*/
 }
