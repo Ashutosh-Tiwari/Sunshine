@@ -25,6 +25,7 @@ class ForecastAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_COUNT = 2;
     private final int VIEW_TYPE_TODAY = 0;
     private final int VIEW_TYPE_FUTURE_DAY = 1;
+    private boolean mUseTodayLayout;
 
 
     ForecastAdapter(Context context, Cursor c, int flags) {
@@ -34,7 +35,7 @@ class ForecastAdapter extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+        return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
 
     @Override
@@ -105,17 +106,15 @@ class ForecastAdapter extends CursorAdapter {
         //Read weather forecast from cursor
         String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
         myViewHolder.descriptionView.setText(description);
-
-        //Read user preference for metric or imperial temperature unit
-        boolean isMetric = Utility.isMetric(context);
+        myViewHolder.iconView.setContentDescription(description);
 
         //Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        myViewHolder.highTempView.setText(Utility.formatTemperature(context, high, isMetric));
+        myViewHolder.highTempView.setText(Utility.formatTemperature(context, high));
 
         //Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        myViewHolder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
+        myViewHolder.lowTempView.setText(Utility.formatTemperature(context, low));
     }
 
     private class MyViewHolder {
@@ -132,5 +131,9 @@ class ForecastAdapter extends CursorAdapter {
             this.highTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
             this.lowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
         }
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
     }
 }

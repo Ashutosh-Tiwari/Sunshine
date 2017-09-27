@@ -1,5 +1,6 @@
 package com.example.ashutoshtiwari.sunshine;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.ashutoshtiwari.sunshine.data.WeatherContract;
+import com.example.ashutoshtiwari.sunshine.sync.SunshineSyncAdapter;
 
 /**
  * Created by Ashutosh.tiwari on 14/06/17.
@@ -56,11 +59,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
+
     private static final String SELECTED_KEY = "position";
     private int mPosition;
     private ListView forecastList;
 
     private ForecastAdapter mForecastAdapter;
+    private boolean mUseTodayLayout;
+
 
     public ForecastFragment() {
     }
@@ -72,30 +78,24 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         setHasOptionsMenu(true);
     }
 
-   /* @Override
-    public void onStart() {
-        super.onStart();
-        updateWeather();
-    }*/
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.forecast_fragment, menu);
+        inflater.inflate(R.menu.main, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_refresh) {
-            updateWeather();
+        int id = item.getItemId();
+
+        if (id == R.id.action_map) {
+            showMap();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void updateWeather() {
-        FetchWeatherTask fetchWeatherTask = new FetchWeatherTask(getActivity());
-        String location = Utility.getPreferredLocation(getActivity());
-        fetchWeatherTask.execute(location);
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
     public void onLocationChanged() {
@@ -115,11 +115,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
-
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
         forecastList = (ListView) rootView.findViewById(R.id.listview_forecast);
         forecastList.setAdapter(mForecastAdapter);
 
+        if (mUseTodayLayout) {
+
+        }
 
         forecastList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -140,6 +142,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+
         return rootView;
     }
 
@@ -185,5 +189,38 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         //DetailFragmentCallback for when an item has been selected.
         public void onItemSelected(Uri dateUri);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
+    }
+
+    private void showMap() {
+        if (mForecastAdapter != null) {
+            Cursor cursor = mForecastAdapter.getCursor();
+            if (cursor != null) {
+                cursor.moveToPosition(0);
+                String posLat = cursor.getString(COL_COORD_LAT);
+                String posLong = cursor.getString(COL_COORD_LONG);
+
+                Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.e("ForecastFragment", "Couldn't call " + geoLocation.toString() + "no apps installed to handle the request");
+                }
+            }
+        }
+
+        //Uri geoLocation = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", location).build();
+        //Log.i("Forecast Activity", geoLocation.toString());
+
+
     }
 }

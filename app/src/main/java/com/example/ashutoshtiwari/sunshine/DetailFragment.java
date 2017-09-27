@@ -93,7 +93,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
-        mIconView = (ImageView) view.findViewById(R.id.detail_icon_imageview);
+        mIconView = (ImageView) view.findViewById(R.id.detail_icon);
         mDateView = (TextView) view.findViewById(R.id.detail_date_textview);
         mFriendlyDateView = (TextView) view.findViewById(R.id.detail_day_textview);
         mDescriptionView = (TextView) view.findViewById(R.id.detail_forecast_textview);
@@ -171,14 +171,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         //Read description from the cursor and update view
         String description = data.getString(COLUMN_WETHER_DESC);
         mDescriptionView.setText(description);
+        mIconView.setContentDescription(description);
 
         //Read user preference for metric or imperial temperature unit
         boolean isMetric = Utility.isMetric(getActivity());
 
         //Read high & low temperatures from cursor and update the views
-        String high = Utility.formatTemperature(getContext(), data.getDouble(COLUMN_WEATHER_MAX_TEMP), isMetric);
+        String high = Utility.formatTemperature(getContext(), data.getDouble(COLUMN_WEATHER_MAX_TEMP));
         mTempHighView.setText(high);
-        String low = Utility.formatTemperature(getContext(), data.getDouble(COLUMN_WEATHER_MIN_TEMP), isMetric);
+        String low = Utility.formatTemperature(getContext(), data.getDouble(COLUMN_WEATHER_MIN_TEMP));
         mTempLowView.setText(low);
 
         //Read humidity from cursor and update the view

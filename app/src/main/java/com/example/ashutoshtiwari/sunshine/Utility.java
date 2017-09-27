@@ -33,15 +33,15 @@ public class Utility {
                 .equals(context.getString(R.string.pref_unit_metric));
     }
 
-    static String formatTemperature(Context context, double temperature, boolean isMetric) {
-        double temp;
-        if (!isMetric) {
-            temp = 9 * temperature / 5 + 32;
-        } else {
-            temp = temperature;
+    public static String formatTemperature(Context context, double temperature) {
+        //Data stored in Celsius by default. If user wants to see in Fahrenheit, convert the values here
+        String suffix = "\u00B0";
+
+        if (!isMetric(context)) {
+            temperature = (temperature * 1.8) + 32;
         }
-        //return String.format("%.0f", temp);
-        return context.getString(R.string.format_temperature, temp);
+        //For presentation, assume the user don't care about the tenths of a degree.
+        return String.format(context.getString(R.string.format_temperature), temperature);
     }
 
     static String formatDate(long dateInMillis) {
@@ -158,7 +158,7 @@ public class Utility {
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding icon. -1 if no relation is found.
      */
-    static int getIconResourceForWeatherCondition(int weatherId) {
+    public static int getIconResourceForWeatherCondition(int weatherId) {
         // Based on weather code data found at:
         // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
         if (weatherId >= 200 && weatherId <= 232) {
